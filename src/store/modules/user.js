@@ -9,7 +9,8 @@ import { resetRouter } from '@/router'
 const state = {
   token: getToken(),
   username: '',
-  profile: ''
+  profile: '',
+  roles: []
 }
 
 const mutations = {
@@ -21,7 +22,11 @@ const mutations = {
   },
   SET_PROFILE: (state, profile) => {
     state.profile = profile
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
   }
+
 }
 
 const actions = {
@@ -31,16 +36,17 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
         .then(response => {
-          const { data } = response.data
-          if (!data.is_superuser) {
-            reject ('Verification failed, no admin right.')
+          let data = response.data
+          if (data.user.is_superuser) {
+            commit('SET_ROLES', ['admin'])
+          } else {
+            commit('SET_ROLES', ['admin'])
           }
-
           commit('SET_TOKEN', data.token)
           setToken(data.token)
-          commit('SET_USER_NAME', data.username)
-          commit('SET_PROFILE', data.profile)
-          resolve()
+          commit('SET_USER_NAME', data.user.username)
+          commit('SET_PROFILE', data.user.profile)
+          resolve(data)
         })
         .catch(error => {
           reject(error)
@@ -53,7 +59,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       getUserInfo()
         .then(response => {
-          const { data } = response.data
+          let data = response.data
+          console.log(data)
 
           if (!data) {
             reject('Error to get user info.')

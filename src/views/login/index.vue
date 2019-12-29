@@ -192,14 +192,27 @@ export default {
           this.loading = true
           this.$store
             .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({
-                path: this.redirect || '/',
-                query: this.otherQuery
-              })
+            .then((response) => {
+              if (response.user.is_superuser) {
+                this.$router.push({
+                  path: this.redirect || '/',
+                  query: this.otherQuery
+                })
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '对不起，你无权登录！'
+                })
+                this.$store
+                  .dispatch('user/logout')
+              }
               this.loading = false
             })
-            .catch(() => {
+            .catch((error) => {
+              this.$message({
+                type: 'error',
+                message: error
+              })
               this.loading = false
             })
         } else {
@@ -216,24 +229,6 @@ export default {
         return acc
       }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>

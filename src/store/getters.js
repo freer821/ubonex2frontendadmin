@@ -5,17 +5,10 @@ const getters = {
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
   token: state => state.user.token,
-  avatar: state => state.user.avatar,
-  name: state => state.user.name,
-  introduction: state => state.user.introduction,
+  profile: state => state.user.profile,
   roles: state => state.user.roles,
+  name: state => state.user.username,
   errorLog: state => state.errorLog.logs,
-  permission_routes: state => state.permission.permission_routes,
-  login_info: state => {
-    return {
-      'user': state.user.name,
-      'sign': state.user.token
-    }
-  }
-};
-export default getters;
+  permission_routes: state => state.permission.permission_routes
+}
+export default getters
