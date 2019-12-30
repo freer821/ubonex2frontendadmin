@@ -6,7 +6,7 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'Ubonex 2' // page title
+const name = defaultSettings.title || 'Ubonex' // page title
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {

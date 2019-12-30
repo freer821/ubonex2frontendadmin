@@ -59,13 +59,13 @@ export const constantRoutes = [
         path: 'parcelscan',
         component: () => import('@/views/warehouse/ParcelScan'),
         name: 'parcelscan',
-        meta: { title: '包裹扫描', affix: true }
+        meta: { title: '包裹扫描' }
       },
       {
         path: 'mainplatemgm',
         component: () => import('@/views/warehouse/WarehouseManagement'),
         name: 'mainplatemgm',
-        meta: { title: '批次号/主单号管理', affix: true }
+        meta: { title: '批次号/主单号管理' }
       }
     ]
   }

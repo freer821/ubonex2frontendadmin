@@ -40,7 +40,7 @@ const actions = {
           if (data.user.is_superuser) {
             commit('SET_ROLES', ['admin'])
           } else {
-            commit('SET_ROLES', ['admin'])
+            commit('SET_ROLES', ['user'])
           }
           commit('SET_TOKEN', data.token)
           setToken(data.token)
