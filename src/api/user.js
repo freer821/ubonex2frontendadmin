@@ -21,3 +21,10 @@ export function getUserInfo () {
     method: 'get'
   })
 }
+
+export function getUserCount () {
+  return request({
+    url: '/api/admin/users/count/?is_active=True',
+    method: 'get'
+  })
+}

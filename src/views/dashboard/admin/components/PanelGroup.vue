@@ -7,9 +7,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            用户数
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="users_num" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,13 +57,25 @@
 
 <script>
 import CountTo from 'vue-count-to'
-
+import { getUserCount } from '@/api/user'
 export default {
   components: {
     CountTo
   },
+  data () {
+    return {
+      users_num: 0
+    }
+  },
+  created () {
+    getUserCount().then(response => {
+      this.users_num = response.data.count
+    }).catch(err => {
+      console.log(err)
+    })
+  },
   methods: {
-    handleSetLineChartData(type) {
+    handleSetLineChartData (type) {
       this.$emit('handleSetLineChartData', type)
     }
   }
