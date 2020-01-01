@@ -27,7 +27,7 @@
           <el-button
             type="info"
             size="mini"
-            @click="handlePiciCodeDetailShow(row)"
+            @click="handleMainPlateCodeDetailShow(row)"
           >
             查看
           </el-button>
@@ -67,8 +67,7 @@
 <script>
 import {
   get_main_plate_info,
-  del_main_plate_code,
-  update_main_plate_code
+  packhouse_action
 } from '@/api/warehouse'
 
 import { getPackageStatus, getPackagesInMainPlateCode } from '@/api/package'
@@ -131,7 +130,12 @@ export default {
               message: '主单号未改变！'
             })
           } else {
-            update_main_plate_code(value, row.main_plate_code).then(
+            let data = {
+              action: 'update_main_plate_code',
+              new_main_plate_code: value,
+              old_main_plate_code: row.main_plate_code
+            }
+            packhouse_action(data).then(
               response => {
                 this.$message({
                   type: 'success',
@@ -161,7 +165,8 @@ export default {
         }
       )
         .then(() => {
-          del_main_plate_code(row.main_plate_code).then(response => {
+          let data = { action: 'del_main_plate_code', main_plate_code: row.main_plate_code }
+          packhouse_action(data).then(response => {
             this.$message({
               type: 'success',
               message: response.msg
@@ -176,7 +181,7 @@ export default {
           })
         })
     },
-    handlePiciCodeDetailShow (row) {
+    handleMainPlateCodeDetailShow (row) {
       this.main_plate_code_detail.show = true
       if (row.main_plate_code.trim()) {
         getPackagesInMainPlateCode(row.main_plate_code).then(response => {

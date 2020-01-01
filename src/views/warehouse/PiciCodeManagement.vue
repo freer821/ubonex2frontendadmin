@@ -68,9 +68,7 @@
 <script>
 import {
   get_pici_info,
-  exchange_pici_code_to_main_plate_code,
-  del_pici_code,
-  change_pici_code,
+  packhouse_action
 } from '@/api/warehouse'
 
 import { getPackageStatus, getPackagesInPiciCode } from '@/api/package'
@@ -136,7 +134,8 @@ export default {
               message: '批次号未改变！'
             })
           } else {
-            change_pici_code(value, row.pici_code).then(response => {
+            let data = { action: 'change_pici_code', new_pici_code: value, old_pici_code: row.pici_code }
+            packhouse_action(data).then(response => {
               this.$message({
                 type: 'success',
                 message: response.msg
@@ -159,7 +158,8 @@ export default {
         cancelButtonText: '取消'
       })
         .then(({ value }) => {
-          exchange_pici_code_to_main_plate_code(value, row.pici_code).then(
+          let data = { action: 'exchange_pici_code_to_main_plate_code', pici_code: row.pici_code, main_plate_code: value }
+          packhouse_action(data).then(
             response => {
               this.$message({
                 type: 'success',
@@ -188,7 +188,8 @@ export default {
         }
       )
         .then(() => {
-          del_pici_code(row.pici_code).then(response => {
+          let data = { action: 'del_pici_code', pici_code: row.pici_code }
+          packhouse_action(data).then(response => {
             this.$message({
               type: 'success',
               message: response.msg
