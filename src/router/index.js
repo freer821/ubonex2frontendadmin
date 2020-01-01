@@ -63,9 +63,15 @@ export const constantRoutes = [
       },
       {
         path: 'mainplatemgm',
-        component: () => import('@/views/warehouse/WarehouseManagement'),
+        component: () => import('@/views/warehouse/MainPlateCodeManagement'),
         name: 'mainplatemgm',
-        meta: { title: '批次号/主单号管理' }
+        meta: { title: '主单号管理' }
+      },
+      {
+        path: 'picimgm',
+        component: () => import('@/views/warehouse/PiciCodeManagement'),
+        name: 'picimgm',
+        meta: { title: '批次号管理' }
       }
     ]
   }
