@@ -9,6 +9,9 @@ const getters = {
   roles: state => state.user.roles,
   name: state => state.user.username,
   errorLog: state => state.errorLog.logs,
-  permission_routes: state => state.permission.permission_routes
+  permission_routes: state => state.permission.permission_routes,
+  scan_type: state => state.parcelscan.scan_type,
+  scan_successed: state => state.parcelscan.scan_successed,
+  scan_failed: state => state.parcelscan.scan_failed
 }
 export default getters

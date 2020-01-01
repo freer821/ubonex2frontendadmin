@@ -9,12 +9,12 @@
           class="form-container"
         >
           <el-form-item>
-            <el-radio-group v-model="package_info.scan_type">
+            <el-radio-group v-model="scan_type">
               <el-radio-button label="auto" > 自动获取批次号</el-radio-button>
               <el-radio-button label="manual"> 手动填写主单号</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item v-if="package_info.scan_type=='manual'">
+          <el-form-item v-if="scan_type=='manual'">
             <span slot="label" class="ps-label">主单号</span>
             <input
               v-model="package_info.main_plate_code"
@@ -89,7 +89,7 @@
           系统获取批次号:
         </div>
         <div class="ps_big_pici">
-          <span ref="pici_code_result">{{ package_response.pici_code }}</span>
+          <span ref="pici_code_result">{{ scan_type === 'auto' ? package_response.pici_code :  package_response.main_plate_code}}</span>
         </div>
       </el-col>
     </el-row>
@@ -154,27 +154,47 @@
 
 <script>
 // eslint-disable-next-line camelcase
-import { package_scan } from '@/api/warehouse'
-import {
-  setScanSuccessed,
-  setScanFailed
-} from '@/utils/cookies'
+import { packhouse_action } from '@/api/warehouse'
 
 export default {
   name: 'ParcelScan',
   data () {
     return {
       package_info: {
-        scan_type: '',
+        action: '',
         main_plate_code: '',
         inland_code: '',
         real_weight: ''
       },
       package_response: {},
-      scan_result_successed: 0,
-      scan_result_failed: 0,
       pop_visible: false,
       pop_failed_visible: false
+    }
+  },
+  computed: {
+    scan_type: {
+      get () {
+        return this.$store.getters.scan_type
+      },
+      set (value) {
+        this.$store.dispatch('parcelscan/setScantype', value)
+      }
+    },
+    scan_result_successed: {
+      get () {
+        return this.$store.getters.scan_successed
+      },
+      set (value) {
+        this.$store.dispatch('parcelscan/setScanSuccessed', value)
+      }
+    },
+    scan_result_failed: {
+      get () {
+        return this.$store.getters.scan_failed
+      },
+      set (value) {
+        this.$store.dispatch('parcelscan/setScanFailed', value)
+      }
     }
   },
   methods: {
@@ -183,24 +203,34 @@ export default {
       this.$refs.real_weight.focus()
     },
     package_request_submit () {
+      if (this.scan_type === 'manual') {
+        if (this.package_info.main_plate_code) {
+          this.package_info.action = 'parcel_scan_manual'
+        } else {
+          this.$message({
+            type: 'error',
+            message: '请输入主单号！'
+          })
+          return
+        }
+      } else {
+        this.package_info.action = 'parcel_scan_auto'
+      }
       this.package_response = {}
-      package_scan(this.package_info)
+      packhouse_action(this.package_info)
         .then(response => {
           this.package_response = response.msg
           if (this.package_response.status_no === '41') {
             this.package_response.status = '复重成功！'
             this.scan_result_successed = parseInt(this.scan_result_successed) + 1
-            //setScanSuccessed(this.scan_result_successed)
           } else {
             this.package_response.status = '复重失败！'
             this.scan_result_failed = parseInt(this.scan_result_failed) + 1
-            setScanFailed(this.scan_result_failed)
           }
         })
         .catch(err => {
           console.log(err)
           this.scan_result_failed = parseInt(this.scan_result_failed) + 1
-          //setScanFailed(this.scan_result_failed)
         })
         .finally(() => {
           console.log('call finally')
@@ -214,10 +244,8 @@ export default {
     resetscanresult (type) {
       if (type === 'success') {
         this.scan_result_successed = 0
-        //setScanSuccessed(this.scan_result_successed)
       } else {
         this.scan_result_failed = 0
-        //setScanFailed(this.scan_result_failed)
       }
       this.pop_visible = false
       this.pop_failed_visible = false
@@ -231,10 +259,6 @@ export default {
         this.$refs.pici_code_result.style.color = 'red'
         this.$refs.package_status_result.style.background = 'red'
       }
-      setTimeout(() => {
-        this.$refs.pici_code_result.style.color = 'black'
-        this.$refs.package_status_result.style.background = '#009977'
-      }, 1000)
     }
   }
 }
