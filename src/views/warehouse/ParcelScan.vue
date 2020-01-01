@@ -9,6 +9,20 @@
           class="form-container"
         >
           <el-form-item>
+            <el-radio-group v-model="package_info.scan_type">
+              <el-radio-button label="auto" > 自动获取批次号</el-radio-button>
+              <el-radio-button label="manual"> 手动填写主单号</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="package_info.scan_type=='manual'">
+            <span slot="label" class="ps-label">主单号</span>
+            <input
+              v-model="package_info.main_plate_code"
+              type="text"
+              class="ps_input"
+            />
+            </el-form-item>
+            <el-form-item>
             <span slot="label" class="ps-label">包裹单号</span>
             <input
               v-model="package_info.inland_code"
@@ -139,11 +153,9 @@
 </template>
 
 <script>
-  // eslint-disable-next-line camelcase
+// eslint-disable-next-line camelcase
 import { package_scan } from '@/api/warehouse'
 import {
-  getScanSuccessed,
-  getScanFailed,
   setScanSuccessed,
   setScanFailed
 } from '@/utils/cookies'
@@ -153,12 +165,14 @@ export default {
   data () {
     return {
       package_info: {
+        scan_type: '',
+        main_plate_code: '',
         inland_code: '',
         real_weight: ''
       },
       package_response: {},
-      //scan_result_successed: getScanSuccessed(),
-      //scan_result_failed: getScanFailed(),
+      scan_result_successed: 0,
+      scan_result_failed: 0,
       pop_visible: false,
       pop_failed_visible: false
     }
@@ -176,7 +190,7 @@ export default {
           if (this.package_response.status_no === '41') {
             this.package_response.status = '复重成功！'
             this.scan_result_successed = parseInt(this.scan_result_successed) + 1
-            setScanSuccessed(this.scan_result_successed)
+            //setScanSuccessed(this.scan_result_successed)
           } else {
             this.package_response.status = '复重失败！'
             this.scan_result_failed = parseInt(this.scan_result_failed) + 1
@@ -186,7 +200,7 @@ export default {
         .catch(err => {
           console.log(err)
           this.scan_result_failed = parseInt(this.scan_result_failed) + 1
-          setScanFailed(this.scan_result_failed)
+          //setScanFailed(this.scan_result_failed)
         })
         .finally(() => {
           console.log('call finally')
@@ -200,10 +214,10 @@ export default {
     resetscanresult (type) {
       if (type === 'success') {
         this.scan_result_successed = 0
-        setScanSuccessed(this.scan_result_successed)
+        //setScanSuccessed(this.scan_result_successed)
       } else {
         this.scan_result_failed = 0
-        setScanFailed(this.scan_result_failed)
+        //setScanFailed(this.scan_result_failed)
       }
       this.pop_visible = false
       this.pop_failed_visible = false

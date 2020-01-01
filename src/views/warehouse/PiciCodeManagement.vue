@@ -8,7 +8,7 @@
       style="width: 100%;"
     >
       <el-table-column prop="pici_code" label="批次号"></el-table-column>
-      <el-table-column prop="status" label="包裹状态" sortable :formatter="statusformatter" />
+      <el-table-column prop="status" label="包裹状态" sortable :formatter="statusformatter"/>
       <el-table-column prop="dcount" label="内含包裹数"></el-table-column>
       <el-table-column
         label="操作"
@@ -51,27 +51,35 @@
       :title="pici_code_detail.title"
       :visible.sync="pici_code_detail.show"
       direction="rtl"
-      size="50%"
+      size="70%"
       :before-close="handleClose">
       <el-table :data="pici_code_detail.data" style="width: 100%" height="700">
-        <el-table-column property="sender_name" label="发件人" ></el-table-column>
-        <el-table-column property="receiver_name" label="收件人" ></el-table-column>
+        <el-table-column property="sender_name" label="发件人"></el-table-column>
+        <el-table-column property="receiver_name" label="收件人"></el-table-column>
         <el-table-column property="receiver_city" label="收件人城市"></el-table-column>
         <el-table-column property="logistic_category" label="物流线路"></el-table-column>
         <el-table-column property="inland_code" label="物流单号"></el-table-column>
-        <el-table-column property="package_real_weight" label="包裹重量"></el-table-column>
+        <el-table-column property="package_real_weight" label="包裹重量(Kg)"></el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" @click="removePackageFromPiciCode(scope.$index, scope.row)">
+              移除此包裹
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import {
-  get_pici_info,
-  packhouse_action
-} from '@/api/warehouse'
+import { get_pici_info, packhouse_action } from '@/api/warehouse'
 
-import { getPackageStatus, getPackagesInPiciCode } from '@/api/package'
+import { getPackagesInPiciCode, getPackageStatus } from '@/api/package'
 
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -158,7 +166,11 @@ export default {
         cancelButtonText: '取消'
       })
         .then(({ value }) => {
-          let data = { action: 'exchange_pici_code_to_main_plate_code', pici_code: row.pici_code, main_plate_code: value }
+          let data = {
+            action: 'exchange_pici_code_to_main_plate_code',
+            pici_code: row.pici_code,
+            main_plate_code: value
+          }
           packhouse_action(data).then(
             response => {
               this.$message({
@@ -174,6 +186,34 @@ export default {
           this.$message({
             type: 'info',
             message: '取消输入'
+          })
+        })
+    },
+    removePackageFromPiciCode (index, row) {
+      this.$confirm(
+        '确定将此包裹从批号: ' + row.pici_code + ' 中移除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          let data = { action: 'remove_package_from_pici_code', package_id: row.id }
+          packhouse_action(data).then(response => {
+            this.$message({
+              type: 'success',
+              message: response.msg
+            })
+            this.pici_code_detail.data.splice(index, 1)
+            this.fetchPiciParcels()
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消移除'
           })
         })
     },
