@@ -17,7 +17,7 @@
           <el-form-item v-if="scan_type=='manual'">
             <span slot="label" class="ps-label">主单号</span>
             <input
-              v-model="package_info.main_plate_code"
+              v-model="main_plate_code"
               type="text"
               class="ps_input"
             />
@@ -162,7 +162,6 @@ export default {
     return {
       package_info: {
         action: '',
-        main_plate_code: '',
         inland_code: '',
         real_weight: ''
       },
@@ -178,6 +177,14 @@ export default {
       },
       set (value) {
         this.$store.dispatch('parcelscan/setScantype', value)
+      }
+    },
+    main_plate_code: {
+      get () {
+        return this.$store.getters.scan_main_plate_code
+      },
+      set (value) {
+        this.$store.dispatch('parcelscan/setScanMainPlateCode', value)
       }
     },
     scan_result_successed: {
@@ -204,8 +211,9 @@ export default {
     },
     package_request_submit () {
       if (this.scan_type === 'manual') {
-        if (this.package_info.main_plate_code) {
+        if (this.main_plate_code) {
           this.package_info.action = 'parcel_scan_manual'
+          this.package_info.main_plate_code = this.main_plate_code
         } else {
           this.$message({
             type: 'error',

@@ -12,6 +12,7 @@ const getters = {
   permission_routes: state => state.permission.permission_routes,
   scan_type: state => state.parcelscan.scan_type,
   scan_successed: state => state.parcelscan.scan_successed,
-  scan_failed: state => state.parcelscan.scan_failed
+  scan_failed: state => state.parcelscan.scan_failed,
+  scan_main_plate_code: state => state.parcelscan.scan_main_plate_code
 }
 export default getters
