@@ -10,7 +10,7 @@
       height="250"
     >
       <el-table-column prop="pici_code" label="批次号"></el-table-column>
-      <el-table-column prop="parcel_num" label="内含包裹数"></el-table-column>
+      <el-table-column prop="dcount" label="内含包裹数"></el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -85,7 +85,7 @@
     >
       <!--el-table-column type="selection" width="55"></el-table-column-->
       <el-table-column prop="main_plate_code" label="主单号"></el-table-column>
-      <el-table-column prop="parcel_num" label="内含包裹数"></el-table-column>
+      <el-table-column prop="dcount" label="内含包裹数"></el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -140,7 +140,7 @@ export default {
     fetchPiciParcels () {
       get_pici_info()
         .then(response => {
-          this.pici_data = response.msg
+          this.pici_data = response.data
         })
         .catch(err => {
           console.log(err)
@@ -149,7 +149,7 @@ export default {
     fetchMainPlateParcels () {
       get_main_plate_info()
         .then(response => {
-          this.main_plate_data = response.msg
+          this.main_plate_data = response.data
         })
         .catch(err => {
           console.log(err)

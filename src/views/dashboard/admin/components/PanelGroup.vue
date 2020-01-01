@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            今日投诉
           </div>
           <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
         </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            今日支付
           </div>
           <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
         </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            今日包裹
           </div>
           <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>

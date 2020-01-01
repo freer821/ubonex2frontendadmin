@@ -14,20 +14,16 @@ export function package_scan (input) {
 }
 
 export function get_pici_info () {
-  const data = Object.assign({ action: 'get_pici_info' }, login_info)
   return request({
-    url: '/packhouse_action',
-    method: 'post',
-    data
+    url: '/api/admin/packages/list_pici_codes/',
+    method: 'get'
   })
 }
 
 export function get_main_plate_info () {
-  const data = Object.assign({ action: 'get_main_plate_info' }, login_info)
   return request({
-    url: '/packhouse_action',
-    method: 'post',
-    data
+    url: '/api/admin/packages/list_main_plate_codes/',
+    method: 'get'
   })
 }
 

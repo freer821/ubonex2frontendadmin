@@ -157,8 +157,8 @@ export default {
         real_weight: ''
       },
       package_response: {},
-      scan_result_successed: getScanSuccessed(),
-      scan_result_failed: getScanFailed(),
+      //scan_result_successed: getScanSuccessed(),
+      //scan_result_failed: getScanFailed(),
       pop_visible: false,
       pop_failed_visible: false
     }
