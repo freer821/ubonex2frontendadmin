@@ -57,7 +57,7 @@
       direction="rtl"
       size="70%"
       :before-close="handleClose">
-      <Packagelist :tabledata="pici_code_detail.data" :table_type="pici_code_detail.title" @refresh-event="fetchTableData"/>
+      <Packagelist :tabledata="pici_code_detail.data" table_type="pici_code" :assigned_code="pici_code_detail.title" @refresh-event="fetchTableData"/>
     </el-drawer>
   </div>
 </template>

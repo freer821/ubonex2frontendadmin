@@ -56,7 +56,7 @@
       direction="rtl"
       size="70%"
       :before-close="handleClose">
-      <Packagelist :tabledata="main_plate_code_detail.data" :table_type="main_plate_code_detail.title" @refresh-event="fetchTableData"/>
+      <Packagelist :tabledata="main_plate_code_detail.data" table_type="main_plate_code" :assigned_code="main_plate_code_detail.title" @refresh-event="fetchTableData"/>
     </el-drawer>
   </div>
 </template>

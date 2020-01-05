@@ -1,9 +1,16 @@
 <template>
   <div>
+    <el-input
+      placeholder="扫入新包裹单号，然后回车"
+      style="width: 60%; padding: 20px"
+      v-model="new_inland_code"
+      @keyup.enter.native="scan_new_code"
+      clearable>
+    </el-input>
     <el-table
       :data="tabledata.filter(data => !data.inland_code || !search || data.inland_code.toLowerCase().includes(search.toLowerCase()))"
-      style="width: 100%"
-      height="700">
+      style="height: calc(100vh - 150px); overflow: auto;"
+      >
       <el-table-column property="sender_name" label="发件人"></el-table-column>
       <el-table-column property="receiver_name" label="收件人"></el-table-column>
       <el-table-column property="receiver_city" label="收件人城市"></el-table-column>
@@ -40,16 +47,32 @@ export default {
   name: 'package-list',
   props: {
     tabledata: Array,
-    table_type: String
+    table_type: String,
+    assigned_code: String
   },
   data () {
     return {
-      search: ''
+      search: '',
+      new_inland_code: ''
     }
   },
   methods: {
+    scan_new_code () {
+      console.log('scan_new_code')
+      if (this.new_inland_code) {
+        console.log(this.new_inland_code)
+        let data = { action: 'add_package_into_main_plate_or_pici_code', code_type: this.table_type, assigned_code: this.assigned_code, inland_code: this.new_inland_code }
+        packhouse_action(data).then(response => {
+          this.$message({
+            type: 'success',
+            message: '包裹添加成功！'
+          })
+          this.tabledata.push(response.msg)
+          this.$emit('refresh-event')
+        })
+      }
+    },
     removePackage (index, row) {
-      console.log(this.table_type)
       this.$confirm(
         '确定将此包裹从单号: ' + (this.table_type === 'main_plate_code' ? row.main_plate_code : row.pici_code) + ' 中移除?',
         '提示',
