@@ -20,3 +20,12 @@ export function getPackagesInPiciCode (picicode) {
     method: 'get'
   })
 }
+
+
+export function getPackageCount (data) {
+  return request({
+    url: '/api/admin/packages/packages_statisics/',
+    method: 'post',
+    data
+  })
+}
