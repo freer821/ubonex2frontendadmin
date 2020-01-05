@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-row :gutter="20" style="margin-bottom: 20px">
+      <el-col :span="3" :offset="21"><el-button type="primary" icon="el-icon-refresh" @click="fetchTableData">刷新</el-button></el-col>
+    </el-row>
+
     <el-table
       :data="main_plate_data.filter(data => !main_plate_code_search || data.main_plate_code.toLowerCase().includes(main_plate_code_search.toLowerCase()))"
       border
@@ -52,39 +56,21 @@
       direction="rtl"
       size="70%"
       :before-close="handleClose">
-      <el-table :data="main_plate_code_detail.data" style="width: 100%" height="700">
-        <el-table-column property="sender_name" label="发件人"></el-table-column>
-        <el-table-column property="receiver_name" label="收件人"></el-table-column>
-        <el-table-column property="receiver_city" label="收件人城市"></el-table-column>
-        <el-table-column property="logistic_category" label="物流线路"></el-table-column>
-        <el-table-column property="inland_code" label="物流单号"></el-table-column>
-        <el-table-column property="package_real_weight" label="包裹重量(Kg)"></el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button type="danger" @click.native.prevent="removePackageFromMainPlateCode(scope.$index, scope.row)">
-              移除此包裹
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <Packagelist :tabledata="main_plate_code_detail.data" :table_type="main_plate_code_detail.title" @refresh-event="fetchTableData"/>
     </el-drawer>
   </div>
 </template>
 
 <script>
 import { get_main_plate_info, packhouse_action } from '@/api/warehouse'
-
 import { getPackagesInMainPlateCode, getPackageStatus } from '@/api/package'
-
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Packagelist from './components/package-list'
 
 export default {
   name: 'MainPlateManagement',
-  components: { Pagination },
+  components: {
+    Packagelist
+  },
   data () {
     return {
       main_plate_data: [],
@@ -100,7 +86,7 @@ export default {
   },
   created () {
     this.fetchPackageStatus()
-    this.fetchMainPlateParcels()
+    this.fetchTableData()
   },
   methods: {
     statusformatter (row, column) {
@@ -113,7 +99,8 @@ export default {
         console.log(err)
       })
     },
-    fetchMainPlateParcels () {
+    fetchTableData () {
+      console.log('get_main_plate_info')
       get_main_plate_info()
         .then(response => {
           this.main_plate_data = response.data
@@ -149,7 +136,7 @@ export default {
                   type: 'success',
                   message: response.msg
                 })
-                this.fetchMainPlateParcels()
+                this.fetchTableData()
               }
             )
           }
@@ -179,41 +166,13 @@ export default {
               type: 'success',
               message: response.msg
             })
-            this.fetchMainPlateParcels()
+            this.fetchTableData()
           })
         })
         .catch(() => {
           this.$message({
             type: 'error',
             message: '已取消删除'
-          })
-        })
-    },
-    removePackageFromMainPlateCode (index, row) {
-      this.$confirm(
-        '确定将此包裹从主单号: ' + row.main_plate_code + ' 中移除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
-        .then(() => {
-          let data = { action: 'remove_package_from_mainplate_code', package_id: row.id }
-          packhouse_action(data).then(response => {
-            this.$message({
-              type: 'success',
-              message: response.msg
-            })
-            this.main_plate_code_detail.data.splice(index, 1)
-            this.fetchMainPlateParcels()
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消移除'
           })
         })
     },

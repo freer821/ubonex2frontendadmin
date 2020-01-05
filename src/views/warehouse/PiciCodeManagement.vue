@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-row :gutter="20" style="margin-bottom: 20px">
+      <el-col :span="3" :offset="21"><el-button type="primary" icon="el-icon-refresh" @click="fetchTableData">刷新</el-button></el-col>
+    </el-row>
+
     <el-table
       :data="pici_data.filter(data => !pici_code_search || data.pici_code  === parseInt(pici_code_search))"
       border
@@ -53,25 +57,7 @@
       direction="rtl"
       size="70%"
       :before-close="handleClose">
-      <el-table :data="pici_code_detail.data" style="width: 100%" height="700">
-        <el-table-column property="sender_name" label="发件人"></el-table-column>
-        <el-table-column property="receiver_name" label="收件人"></el-table-column>
-        <el-table-column property="receiver_city" label="收件人城市"></el-table-column>
-        <el-table-column property="logistic_category" label="物流线路"></el-table-column>
-        <el-table-column property="inland_code" label="物流单号"></el-table-column>
-        <el-table-column property="package_real_weight" label="包裹重量(Kg)"></el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button type="danger" @click="removePackageFromPiciCode(scope.$index, scope.row)">
-              移除此包裹
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <Packagelist :tabledata="pici_code_detail.data" :table_type="pici_code_detail.title" @refresh-event="fetchTableData"/>
     </el-drawer>
   </div>
 </template>
@@ -81,11 +67,11 @@ import { get_pici_info, packhouse_action } from '@/api/warehouse'
 
 import { getPackagesInPiciCode, getPackageStatus } from '@/api/package'
 
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Packagelist from './components/package-list'
 
 export default {
-  name: 'MainPlateManagement',
-  components: { Pagination },
+  name: 'PiciManagement',
+  components: { Packagelist },
   data () {
     return {
       pici_data: [],
@@ -102,7 +88,7 @@ export default {
   },
   created () {
     this.fetchPackageStatus()
-    this.fetchPiciParcels()
+    this.fetchTableData()
   },
   methods: {
     statusformatter (row, column) {
@@ -115,7 +101,7 @@ export default {
         console.log(err)
       })
     },
-    fetchPiciParcels () {
+    fetchTableData () {
       get_pici_info()
         .then(response => {
           this.pici_data = response.data
@@ -148,7 +134,7 @@ export default {
                 type: 'success',
                 message: response.msg
               })
-              this.fetchPiciParcels()
+              this.fetchTableData()
             })
           }
         })
@@ -177,8 +163,7 @@ export default {
                 type: 'success',
                 message: response.msg
               })
-              this.fetchPiciParcels()
-              this.fetchMainPlateParcels()
+              this.fetchTableData()
             }
           )
         })
@@ -186,34 +171,6 @@ export default {
           this.$message({
             type: 'info',
             message: '取消输入'
-          })
-        })
-    },
-    removePackageFromPiciCode (index, row) {
-      this.$confirm(
-        '确定将此包裹从批号: ' + row.pici_code + ' 中移除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
-        .then(() => {
-          let data = { action: 'remove_package_from_pici_code', package_id: row.id }
-          packhouse_action(data).then(response => {
-            this.$message({
-              type: 'success',
-              message: response.msg
-            })
-            this.pici_code_detail.data.splice(index, 1)
-            this.fetchPiciParcels()
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消移除'
           })
         })
     },
@@ -234,7 +191,7 @@ export default {
               type: 'success',
               message: response.msg
             })
-            this.fetchPiciParcels()
+            this.fetchTableData()
           })
         })
         .catch(() => {
@@ -249,7 +206,7 @@ export default {
       this.pici_code_detail.show = true
       if (row.pici_code) {
         getPackagesInPiciCode(row.pici_code).then(response => {
-          this.pici_code_detail.title = row.pici_code
+          this.pici_code_detail.title = row.pici_code.toString()
           this.pici_code_detail.data = response.data
         }).catch(err => {
           this.$message({
