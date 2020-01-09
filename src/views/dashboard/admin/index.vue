@@ -6,17 +6,10 @@
       <line-chart />
     </el-row>
 
-    <el-row :gutter="32">
-      <el-col :span="12">
+    <el-row >
         <div class="chart-wrapper">
           <pie-chart />
         </div>
-      </el-col>
-      <el-col :span="12">
-        <div class="chart-wrapper">
-          <bar-chart />
-        </div>
-      </el-col>
     </el-row>
   </div>
 </template>
@@ -25,15 +18,13 @@
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 import PieChart from './components/PieChart'
-import BarChart from './components/BarChart'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
     LineChart,
-    PieChart,
-    BarChart
+    PieChart
   }
 }
 </script>

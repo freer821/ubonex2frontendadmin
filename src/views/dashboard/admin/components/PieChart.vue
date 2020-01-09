@@ -3,9 +3,10 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-require('echarts/theme/macarons') // echarts theme
+import echarts from 'echarts' // echarts theme
 import resize from './mixins/resize'
+import { getPackageCount } from '@/api/package'
+require('echarts/theme/macarons')
 
 export default {
   mixins: [resize],
@@ -23,25 +24,34 @@ export default {
       default: '300px'
     }
   },
-  data() {
+  data () {
     return {
-      chart: null
+      chart: null,
+      charData: [],
+      nameData: []
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
-  },
-  beforeDestroy() {
+  beforeDestroy () {
     if (!this.chart) {
       return
     }
     this.chart.dispose()
     this.chart = null
   },
+  created () {
+    this.fetchPackagesCountWeek()
+  },
   methods: {
-    initChart() {
+    fetchPackagesCountWeek () {
+      getPackageCount('weekbysender').then(response => {
+        this.nameData = response.data.map(value => value.name)
+        this.charData = response.data
+        this.initChart()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
@@ -52,7 +62,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: this.nameData
         },
         series: [
           {
@@ -61,13 +71,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
+            data: this.charData,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
