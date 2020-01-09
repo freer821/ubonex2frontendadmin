@@ -90,7 +90,9 @@ export default {
   },
   methods: {
     statusformatter (row, column) {
-      return this.package_status[row.status]
+      let package_status = this.package_status[row.status]
+      row.status = parseInt(row.status)
+      return package_status
     },
     fetchPackageStatus () {
       getPackageStatus().then(response => {
@@ -100,7 +102,6 @@ export default {
       })
     },
     fetchTableData () {
-      console.log('get_main_plate_info')
       get_main_plate_info()
         .then(response => {
           this.main_plate_data = response.data

@@ -75,9 +75,6 @@ export default {
     this.fetchPackagesCountToday()
   },
   methods: {
-    handleSetLineChartData (type) {
-      this.$emit('handleSetLineChartData', type)
-    },
     fetchUserCount () {
       getUserCount().then(response => {
         this.users_num = response.data.count
@@ -86,12 +83,7 @@ export default {
       })
     },
     fetchPackagesCountToday () {
-      let today = new Date()
-      let data = {
-        start_date: today.toISOString().slice(0, 10),
-        end_date: today.toISOString().slice(0, 10)
-      }
-      getPackageCount(data).then(response => {
+      getPackageCount('today').then(response => {
         this.packages_num = response.data.count
       }).catch(err => {
         console.log(err)

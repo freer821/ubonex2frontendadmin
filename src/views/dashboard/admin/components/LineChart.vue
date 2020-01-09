@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { getPackageCount } from '@/api/package'
+
 import echarts from 'echarts' // echarts theme
 import resize from './mixins/resize'
 require('echarts/theme/macarons')
@@ -25,29 +27,14 @@ export default {
     autoResize: {
       type: Boolean,
       default: true
-    },
-    chartData: {
-      type: Object,
-      required: true
     }
   },
   data () {
     return {
-      chart: null
+      chart: null,
+      xAxisData: [],
+      yAxisData: []
     }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (val) {
-        this.setOptions(val)
-      }
-    }
-  },
-  mounted () {
-    this.$nextTick(() => {
-      this.initChart()
-    })
   },
   beforeDestroy () {
     if (!this.chart) {
@@ -56,15 +43,27 @@ export default {
     this.chart.dispose()
     this.chart = null
   },
+  created () {
+    this.fetchPackagesCountWeek()
+  },
   methods: {
+    fetchPackagesCountWeek () {
+      getPackageCount('week').then(response => {
+        this.xAxisData = response.data.map(value => value.day)
+        this.yAxisData = response.data.map(value => value.available)
+        this.initChart()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
+      this.setOptions()
     },
-    setOptions ({ expectedData, actualData } = {}) {
+    setOptions () {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.xAxisData,
           boundaryGap: false,
           axisTick: {
             show: false
@@ -90,10 +89,10 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          data: ['新建订单']
         },
         series: [{
-          name: 'expected',
+          name: '新建订单',
           itemStyle: {
             normal: {
               color: '#FF005A',
@@ -105,29 +104,9 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: this.yAxisData,
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
-        },
-        {
-          name: 'actual',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#3888fa',
-              lineStyle: {
-                color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
-            }
-          },
-          data: actualData,
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
         }]
       })
     }
