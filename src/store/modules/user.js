@@ -75,6 +75,16 @@ const actions = {
         })
     })
   },
+  // remove token
+  resetToken({ commit }) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', '')
+      commit('SET_USER_NAME', '')
+      commit('SET_PROFILE', '')
+      removeToken()
+      resolve()
+    })
+  },
 
   // user logout
   logout ({ commit, state, dispatch }) {

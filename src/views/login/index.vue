@@ -9,7 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">UBONEX后台管理系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="请输入邮箱地址"
           name="username"
           type="text"
           tabindex="1"
@@ -42,7 +42,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -63,23 +63,17 @@
         type="primary"
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
-        >Login</el-button
+        >登录</el-button
       >
 
       <div style="position:relative">
-        <div class="tips">
-          <span>本版本为测试版，可任意操作</span>
-        </div>
-        <div class="tips">
-          <span>注：数据库与生产版同步！</span>
-        </div>
 
         <el-link
           class="thirdparty-button"
           type="primary"
           @click="showDialog = true"
         >
-          Username or Password forget?
+          忘记密码?
         </el-link>
       </div>
     </el-form>
