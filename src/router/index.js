@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import { Message } from "element-ui";
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/cookies' // get token from cookie
@@ -45,6 +44,27 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/logistic',
+    component: Layout,
+    redirect: '/logistic/linemanagement',
+    name: 'Logistic',
+    meta: { title: '物流产品管理', icon: 'international'},
+    children: [
+      {
+        path: 'linemanagement',
+        component: () => import('@/views/logistic/LogisitcsManagement'),
+        name: 'linemanagement',
+        meta: { title: '产品线路管理' }
+      },
+      {
+        path: 'linepricemanagement',
+        component: () => import('@/views/logistic/LogisticPriceManagement'),
+        name: 'linepricemanagement',
+        meta: { title: '线路价格管理' }
       }
     ]
   },

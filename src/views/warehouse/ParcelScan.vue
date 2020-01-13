@@ -95,10 +95,10 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="10">
-        <div class="ps_status" v-if="package_response.status_no" ref="package_status_result">
+        <div class="ps_status" v-if="package_response.status" ref="package_status_result">
           <span>{{ package_response.status }}</span>
         </div>
-        <div class="ps_status" v-else><span>等待扫描</span></div>
+        <div class="ps_status" ref="package_status_result" v-else><span>等待扫描</span></div>
       </el-col>
       <el-col :span="7">
         <div class="ps_status2">
@@ -228,17 +228,25 @@ export default {
       packhouse_action(this.package_info)
         .then(response => {
           this.package_response = response.msg
-          if (this.package_response.status_no === '41') {
-            this.package_response.status = '复重成功！'
-            this.scan_result_successed = parseInt(this.scan_result_successed) + 1
-          } else {
-            this.package_response.status = '复重失败！'
-            this.scan_result_failed = parseInt(this.scan_result_failed) + 1
+          switch (this.package_response.status_no) {
+            case '41':
+              this.package_response.status = '复重成功！'
+              this.scan_result_successed = parseInt(this.scan_result_successed) + 1
+              break
+            case '43':
+              this.package_response.status = '补款成功！'
+              this.scan_result_successed = parseInt(this.scan_result_successed) + 1
+              break
+            default:
+              this.package_response.status = '复重失败！'
+              this.scan_result_failed = parseInt(this.scan_result_failed) + 1
+              break
           }
         })
         .catch(err => {
           console.log(err)
           this.scan_result_failed = parseInt(this.scan_result_failed) + 1
+          this.package_response.status = '扫描出错！'
         })
         .finally(() => {
           console.log('call finally')
@@ -260,7 +268,7 @@ export default {
     },
 
     changeBackgroundColor () {
-      if (this.package_response && this.package_response.status_no === '41') {
+      if (this.package_response && (this.package_response.status_no === '41' || this.package_response.status_no === '43')) {
         this.$refs.pici_code_result.style.color = 'green'
         this.$refs.package_status_result.style.background = 'green'
       } else {
