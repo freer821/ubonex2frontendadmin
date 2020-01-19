@@ -6,3 +6,10 @@ export function getLogistics () {
     method: 'get'
   })
 }
+
+export function delLogistic (id) {
+  return request({
+    url: '/api/admin/logistic/' + id + '/',
+    method: 'DELETE'
+  })
+}
