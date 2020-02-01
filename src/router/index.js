@@ -61,10 +61,10 @@ export const constantRoutes = [
         meta: { title: '产品线路管理' }
       },
       {
-        path: 'linepricemanagement',
-        component: () => import('@/views/logistic/LogisticPriceManagement'),
-        name: 'linepricemanagement',
-        meta: { title: '线路价格管理' }
+        path: 'lineapimanagement',
+        component: () => import('@/views/logistic/LogisticAPIManagement'),
+        name: 'lineapimanagement',
+        meta: { title: '线路API管理' }
       }
     ]
   },

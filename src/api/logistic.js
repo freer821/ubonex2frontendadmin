@@ -29,3 +29,18 @@ export function updateLogistic (data) {
     data
   })
 }
+
+export function getLogisticApis () {
+  return request({
+    url: '/api/admin/logisticapis/',
+    method: 'get'
+  })
+}
+
+export function updateLogisticApis (data) {
+  return request({
+    url: '/api/admin/logisticapis/' + data.id + '/',
+    method: 'PUT',
+    data
+  })
+}

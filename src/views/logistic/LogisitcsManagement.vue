@@ -25,9 +25,6 @@
             <el-form-item label="产品代码:">
               <span>{{ scope.row.cagte_label}}</span>
             </el-form-item>
-            <el-form-item label="关税:">
-              <span>{{ scope.row.tariff === '0' ? '不包税' :  '包税'}}</span>
-            </el-form-item>
             <el-form-item label="身份证信息:">
               <span>{{ scope.row.person_id === 'number' ? '号码' :  '图片'}}</span>
             </el-form-item>
@@ -39,7 +36,11 @@
       <el-table-column prop="max_units" label="最大件数"/>
       <el-table-column prop="max_weight" label="最大重量(KG)"/>
       <el-table-column prop="max_value" label="高货值(RMB)"/>
-      <el-table-column prop="postcode_type" label="单号获取方式"/>
+      <el-table-column label="关税">
+        <template slot-scope="scope">
+          <span>{{ scope.row.tariff === '0' ? '不包税' :  '包税'}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="状态">
         <template slot-scope="scope">
           <span>{{ scope.row.isactived  ? '使用中' : '未使用'}}</span>
@@ -68,7 +69,7 @@
     <el-dialog :title="logistic_data_temp.is_new? '新增线路' : logistic_data_temp.data.name" :visible.sync="logistic_data_temp.visible">
       <el-form  :model="logistic_data_temp.data"  :rules="logisticFormRules" ref="logisticForm" label-position="left" label-width="110px" >
         <el-row :gutter="10">
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="状态" label-width="50px">
               <el-select v-model="logistic_data_temp.data.isactived">
                 <el-option label="使用中" :value="true"></el-option>
@@ -76,7 +77,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!--el-col :span="6">
             <el-form-item label="属性" label-width="50px">
               <el-select v-model="logistic_data_temp.data.type" >
                 <el-option label="CC" value="cc"></el-option>
@@ -85,8 +86,8 @@
                 <el-option label="BC红酒" value="bchj"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
+          </el-col-->
+          <el-col :span="8">
             <el-form-item label="关税" label-width="50px">
               <el-select v-model="logistic_data_temp.data.tariff" >
                 <el-option label="包税" value="1"></el-option>
@@ -94,7 +95,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="身份证" label-width="60px">
               <el-select v-model="logistic_data_temp.data.person_id" >
                 <el-option label="号码" value="number"></el-option>
@@ -151,13 +152,13 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row >
+        <!--el-row >
           <el-col :span="24">
             <el-form-item label="单号API" prop="postcode_type">
               <el-input type="textarea" v-model="logistic_data_temp.data.postcode_type" />
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetLogisticTemp">
@@ -226,9 +227,6 @@ export default {
         ],
         custom_name: [
           { required: true, message: '请输入线路海关名称', trigger: 'blur' }
-        ],
-        postcode_type: [
-          { required: true, message: '请输入单号API', trigger: 'blur' }
         ]
       }
     }
