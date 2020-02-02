@@ -187,9 +187,6 @@ export default {
       },
       search: '',
       userFormRules: {
-        reserved2: [
-          { required: true, message: '请输客户昵称', trigger: 'blur' }
-        ]
       }
     }
   },
@@ -255,6 +252,8 @@ export default {
       this.selected_user.isIndeterminate = false
     },
     submitUserForm: function () {
+      this.selected_user.data.profile.reserved1 = this.selected_user.checkedLogistics.join()
+
       this.$refs['userForm'].validate((valid) => {
         if (valid) {
           console.log(this.selected_user)
