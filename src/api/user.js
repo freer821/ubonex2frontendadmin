@@ -28,3 +28,11 @@ export function getUserCount () {
     method: 'get'
   })
 }
+
+
+export function getUsers () {
+  return request({
+    url: '/api/admin/users/',
+    method: 'get'
+  })
+}

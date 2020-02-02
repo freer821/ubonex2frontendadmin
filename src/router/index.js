@@ -48,6 +48,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/usermanagement',
+    name: 'User',
+    meta: { title: '用户管理', icon: 'international'},
+    children: [
+      {
+        path: 'usermanagement',
+        component: () => import('@/views/user/UserManagement'),
+        name: 'usermanagement',
+        meta: { title: '用户列表' }
+      },
+      {
+        path: 'lineapimanagement',
+        component: () => import('@/views/logistic/LogisticPriceManagement'),
+        name: 'lineapimanagement',
+        meta: { title: '价格管理' }
+      }
+    ]
+  },
+  {
     path: '/logistic',
     component: Layout,
     redirect: '/logistic/linemanagement',
