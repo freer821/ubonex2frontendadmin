@@ -3,13 +3,13 @@
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
       <el-form :inline="true" >
         <el-form-item>
-          <el-input  v-model="search" placeholder="搜索产品名称"></el-input>
+          <el-input  v-model="search" placeholder="搜索用户昵称"></el-input>
         </el-form-item>
       </el-form>
     </el-col>
 
     <el-table
-      :data="users_data"
+      :data="users_data.filter(data => !search || data.profile.reserved2.toLowerCase().includes(search.toLowerCase()))"
       border
       fit
       highlight-current-row
@@ -61,7 +61,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="reserved2" label="客户名称(客服备注)"/>
+      <el-table-column prop="profile.reserved2" label="客户名称(客服备注)"/>
       <el-table-column prop="username" label="用户账号"/>
       <el-table-column label="用户类型">
         <template slot-scope="scope">
@@ -146,7 +146,7 @@
 
 <script>
 
-import { getUsers } from '@/api/user'
+import { getUsersAdmin, updateUserAdmin } from '@/api/user'
 import { getLogistics } from '@/api/logistic'
 
 export default {
@@ -196,7 +196,7 @@ export default {
   },
   methods: {
     loadUsers () {
-      getUsers().then(response => {
+      getUsersAdmin().then(response => {
         this.users_data = response.data.results
       }).catch(err => {
         console.log(err)
@@ -256,7 +256,17 @@ export default {
 
       this.$refs['userForm'].validate((valid) => {
         if (valid) {
-          console.log(this.selected_user)
+          updateUserAdmin(this.selected_user.data).then(respone => {
+            this.$message({
+              type: 'success',
+              message: '更新成功！'
+            })
+          }).catch(err => {
+            this.$message({
+              type: 'error',
+              message: err
+            })
+          })
         }
       })
     },

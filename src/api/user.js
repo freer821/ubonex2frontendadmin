@@ -29,10 +29,17 @@ export function getUserCount () {
   })
 }
 
-
-export function getUsers () {
+export function getUsersAdmin () {
   return request({
     url: '/api/admin/users/',
     method: 'get'
+  })
+}
+
+export function updateUserAdmin (data) {
+  return request({
+    url: '/api/admin/users/' + data.id + '/',
+    method: 'put',
+    data
   })
 }
