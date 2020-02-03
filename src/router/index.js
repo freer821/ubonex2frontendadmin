@@ -52,7 +52,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/user/usermanagement',
     name: 'User',
-    meta: { title: '用户管理', icon: 'international'},
+    meta: { title: '用户管理', icon: 'peoples'},
     children: [
       {
         path: 'usermanagement',
@@ -62,7 +62,7 @@ export const constantRoutes = [
       },
       {
         path: 'userpricemanagement',
-        component: () => import('@/views/logistic/LogisticPriceManagement'),
+        component: () => import('@/views/user/UserPriceManagement'),
         name: 'userpricemanagement',
         meta: { title: '价格管理' }
       }
