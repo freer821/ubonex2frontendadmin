@@ -43,3 +43,18 @@ export function updateUserAdmin (data) {
     data
   })
 }
+
+export function getUserPricesAdmin () {
+  return request({
+    url: '/api/admin/users/prices/',
+    method: 'get'
+  })
+}
+
+export function updateUserPricesAdmin (user_id, price_type, data) {
+  return request({
+    url: '/api/admin/users/' + user_id + '/price/' + price_type,
+    method: 'post',
+    data
+  })
+}
