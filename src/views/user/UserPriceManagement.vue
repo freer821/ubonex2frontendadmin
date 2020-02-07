@@ -13,7 +13,32 @@
       <el-button type="primary" icon="el-icon-circle-plus-outline" @click="dialogFormVisible = true">添加价格</el-button>
       <el-tab-pane v-for="item in tabMapOptions" :key="item.key" :label="item.label" :name="item.key" style="padding-top: 20px">
         <keep-alive>
-          <tab-pane :list="selected_user_price_list" />
+          <el-table :data="selected_user_price_list" border fit stripe highlight-current-row style="width: 100%">
+            <el-table-column class-name="status-col" label="重量(KG)">
+              <template slot-scope="{row}">
+                <span>{{ row.weight }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column class-name="status-col" label="价格(EURO)">
+              <template slot-scope="{row}">
+                <span>{{ row.price }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              fixed="right"
+              label="操作"
+              width="120">
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, selected_user_price_list)"
+                  type="text"
+                  size="small">
+                  移除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </keep-alive>
       </el-tab-pane>
     </el-tabs>
@@ -37,12 +62,10 @@
 </template>
 
 <script>
-import tabPane from './components/TabPane'
 import { getUserPricesAdmin, updateUserPricesAdmin } from '@/api/user'
 
 export default {
   name: 'UserPriceManagement',
-  components: { tabPane },
   data () {
     return {
       tabMapOptions: [
@@ -83,7 +106,6 @@ export default {
       })
     },
     updateUserPriceList () {
-      console.log(this.price_type)
       if (this.selected_user_id) {
         this.selected_user_price_dict = this.users_prices.find(user_price => user_price.id === this.selected_user_id)
         if (this.selected_user_price_dict.pricelist) {
@@ -96,13 +118,24 @@ export default {
         } else {
           this.selected_user_price_list = []
         }
-        console.log(this.selected_user_price_list)
-
       }
     },
     addPrice () {
       if (this.selected_user_id && this.price_type) {
         this.selected_user_price_list.push(this.priceform)
+        this.updatePrice()
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请先选择用户名'
+        })
+
+      }
+      this.dialogFormVisible = false
+      this.resetPriceForm()
+    },
+    updatePrice () {
+      if (this.selected_user_id && this.price_type) {
         updateUserPricesAdmin(this.selected_user_id, this.price_type, this.selected_user_price_list).then(response => {
           console.log(response.data)
         }).catch(err => {
@@ -112,7 +145,33 @@ export default {
           })
         })
       }
-      this.dialogFormVisible = false
+    },
+    resetPriceForm () {
+      this.priceform = {
+        price: '',
+        weight: ''
+      }
+    },
+    deleteRow (index, rows) {
+      this.$confirm(
+        '确定删除此价格项?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          rows.splice(index, 1)
+          this.updatePrice()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
